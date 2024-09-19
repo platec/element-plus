@@ -32,7 +32,14 @@ import {
   ElHeader,
   ElMain,
 } from '@element-plus/components/container'
-import { ElDatePicker } from '@element-plus/components/date-picker'
+import {
+  ElBasicDateTable,
+  ElBasicMonthTable,
+  ElBasicYearTable,
+  ElDatePicker,
+  ElPanelDatePick,
+  ElPanelDateRange,
+} from '@element-plus/components/date-picker'
 import {
   ElDescriptions,
   ElDescriptionsItem,
@@ -143,6 +150,12 @@ export default [
   ElHeader,
   ElMain,
   ElDatePicker,
+  ElBasicDateTable,
+  ElPanelDatePick,
+  ElPanelDateRange,
+  ElDatePicker,
+  ElBasicMonthTable,
+  ElBasicYearTable,
   ElDescriptions,
   ElDescriptionsItem,
   ElDialog,
