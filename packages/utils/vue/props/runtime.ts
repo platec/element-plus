@@ -1,26 +1,20 @@
 import { warn } from 'vue'
 import { fromPairs } from 'lodash-unified'
-import { isObject } from '../../types'
-import { hasOwn } from '../../objects'
+import { isArray, isFunction } from '../../types'
 
 import type { PropType } from 'vue'
-import type {
-  EpProp,
-  EpPropConvert,
-  EpPropFinalized,
-  EpPropInput,
-  EpPropMergeType,
-  IfEpProp,
-  IfNativePropType,
-  NativePropType,
-} from './types'
+import type { Default, DefaultFactory, EpProp, EpPropOptions, Value } from './types'
 
-export const epPropKey = '__epPropKey'
-
+type PruneProp<P> = P extends EpPropOptions<infer T, any, any> ? {
+      [K in Exclude<keyof P, 'validator' | 'values'>]: K extends 'type'
+        ? (P['values'] extends readonly unknown[] ? PropType<Exclude<T, PrimitiveUnion<P['values'][number]>> | P['values'][number]> : P[K]):P[K]
+  } : never
 export const definePropType = <T>(val: any): PropType<T> => val
+export const defineEpProp = <P extends EpProp<unknown, V, D>, const V extends Value<unknown>, const D extends Default<unknown, V>>(
+  prop: P & constraintsP<P>
+) => prop as P
 
-export const isEpProp = (val: unknown): val is EpProp<any, any, any> =>
-  isObject(val) && !!(val as any)[epPropKey]
+type PrimitiveUnion<T> = T extends string ? string : T extends number ? number : T extends boolean ? boolean : never;
 
 /**
  * @description Build prop. It can better optimize prop types
@@ -42,81 +36,43 @@ export const isEpProp = (val: unknown): val is EpProp<any, any, any> =>
   } as const)
   @link see more: https://github.com/element-plus/element-plus/pull/3341
  */
-export const buildProp = <
-  Type = never,
-  Value = never,
-  Validator = never,
-  Default extends EpPropMergeType<Type, Value, Validator> = never,
-  Required extends boolean = false
->(
-  prop: EpPropInput<Type, Value, Validator, Default, Required>,
-  key?: string
-): EpPropFinalized<Type, Value, Validator, Default, Required> => {
-  // filter native prop type and nested prop, e.g `null`, `undefined` (from `buildProps`)
-  if (!isObject(prop) || isEpProp(prop)) return prop as any
+export const buildProp = <T, V extends Value<T>, D extends Default<T,V>>(prop: EpProp<T, V, D>, key: string) => {
+  if (isFunction(prop) || isArray(prop) || !prop.values) return prop
 
-  const { values, required, default: defaultValue, type, validator } = prop
+  const { values, validator } = prop
+  const _validator = (val: T) => {
+    let valid = false
+    let allowValuesText = ''
 
-  const _validator =
-    values || validator
-      ? (val: unknown) => {
-          let valid = false
-          let allowedValues: unknown[] = []
+    valid ||= values.includes(val)
+    if (!valid) {
+      allowValuesText = values.map((value) => JSON.stringify(value)).join(', ')
+    }
+    if (validator) valid ||= validator(val)
 
-          if (values) {
-            allowedValues = Array.from(values)
-            if (hasOwn(prop, 'default')) {
-              allowedValues.push(defaultValue)
-            }
-            valid ||= allowedValues.includes(val)
-          }
-          if (validator) valid ||= validator(val)
-
-          if (!valid && allowedValues.length > 0) {
-            const allowValuesText = [...new Set(allowedValues)]
-              .map((value) => JSON.stringify(value))
-              .join(', ')
-            warn(
-              `Invalid prop: validation failed${
-                key ? ` for prop "${key}"` : ''
-              }. Expected one of [${allowValuesText}], got value ${JSON.stringify(
-                val
-              )}.`
-            )
-          }
-          return valid
-        }
-      : undefined
-
-  const epProp: any = {
-    type,
-    required: !!required,
-    validator: _validator,
-    [epPropKey]: true,
+    if (!valid && allowValuesText) {
+      warn(
+        `Invalid prop: validation failed${
+          key ? ` for prop "${key}"` : ''
+        }. Expected one of [${allowValuesText}], got value ${JSON.stringify(
+          val
+        )}.`
+      )
+    }
+    return valid
   }
-  if (hasOwn(prop, 'default')) epProp.default = defaultValue
-  return epProp
+
+  return {
+    ...prop,
+    validator: _validator,
+  }
 }
 
-export const buildProps = <
-  Props extends Record<
-    string,
-    | { [epPropKey]: true }
-    | NativePropType
-    | EpPropInput<any, any, any, any, any>
-  >
->(
-  props: Props
-): {
-  [K in keyof Props]: IfEpProp<
-    Props[K],
-    Props[K],
-    IfNativePropType<Props[K], Props[K], EpPropConvert<Props[K]>>
-  >
-} =>
-  fromPairs(
-    Object.entries(props).map(([key, option]) => [
-      key,
-      buildProp(option as any, key),
-    ])
-  ) as any
+type constraintsPP<PP extends Record<string, unknown>> = { [K in keyof PP]: PP[K] extends EpProp<infer T, infer V, infer D> ? EpProp<T, V, D> : never }
+type constraintsP<P> = P extends EpProp<infer T, infer V, infer D> ? EpProp<T, V, D> : never 
+
+export const buildProps = <PP extends Record<string, EpProp<unknown, V, D | DA | DefaultFactory<T, V>>>, const T extends unknown[], const V extends Value<unknown>, const D extends Default<unknown, V>, DA extends Default<unknown[], V>>(props: PP & constraintsPP<PP>) => { 
+  return fromPairs(
+    Object.entries(props).map(([key, option]) => [key, buildProp(option, key)])
+  ) as { [K in keyof PP]: PP[K] extends PropType<unknown> ? PP[K] : PruneProp<PP[K]> }
+}

@@ -60,14 +60,12 @@ export const treeProps = buildProps({
   },
   props: {
     type: definePropType<TreeOptionProps>(Object),
-    default: () =>
-      mutable({
-        children: TreeOptionsEnum.CHILDREN,
-        label: TreeOptionsEnum.LABEL,
-        disabled: TreeOptionsEnum.DISABLED,
-        value: TreeOptionsEnum.KEY,
-        class: TreeOptionsEnum.CLASS,
-      } as const),
+    default: () => ({
+      children: TreeOptionsEnum.CHILDREN,
+      label: TreeOptionsEnum.LABEL,
+      disabled: TreeOptionsEnum.DISABLED,
+      value: TreeOptionsEnum.KEY,
+    }),
   },
   highlightCurrent: {
     type: Boolean,
@@ -79,7 +77,7 @@ export const treeProps = buildProps({
   },
   defaultCheckedKeys: {
     type: definePropType<TreeKey[]>(Array),
-    default: () => mutable([] as const),
+    default: () => [],
   },
   // Whether checked state of a node not affects its father and
   // child nodes when show-checkbox is true
@@ -89,7 +87,7 @@ export const treeProps = buildProps({
   },
   defaultExpandedKeys: {
     type: definePropType<TreeKey[]>(Array),
-    default: () => mutable([] as const),
+    default: () => [],
   },
   indent: {
     type: Number,
@@ -123,7 +121,7 @@ export const treeProps = buildProps({
     type: Boolean,
     default: true,
   },
-} as const)
+})
 
 export const treeNodeProps = buildProps({
   node: {
@@ -159,14 +157,14 @@ export const treeNodeProps = buildProps({
     default: false,
   },
   itemSize,
-} as const)
+})
 
 export const treeNodeContentProps = buildProps({
   node: {
     type: definePropType<TreeNode>(Object),
     required: true,
   },
-} as const)
+})
 
 // emits
 export const NODE_CLICK = 'node-click'
