@@ -61,6 +61,18 @@ Although `message` property supports HTML strings, dynamically rendering arbitra
 
 :::
 
+## Message using functions ^(2.9.0)
+
+`message` can be VNode.
+
+After ^(2.9.0), `message` supports a function whose return value is a VNode.
+
+:::demo
+
+notification/use-vnode
+
+:::
+
 ## Hide close button
 
 It is possible to hide the close button
@@ -79,6 +91,13 @@ Element Plus has added a global method `$notify` for `app.config.globalPropertie
 
 ```javascript
 import { ElNotification } from 'element-plus'
+import { CloseBold } from '@element-plus/icons-vue'
+
+ElNotification({
+  title: 'Title',
+  message: 'This is a message',
+  closeIcon: CloseBold
+})
 ```
 
 In this case you should call `ElNotification(options)`. We have also registered methods for different types, e.g. `ElNotification.success(options)`. You can call `ElNotification.closeAll()` to manually close all the instances.
@@ -111,7 +130,7 @@ ElNotification({}, appContext)
 | Name                     | Description                                                                                                        | Type                                                                  | Default   |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- | --------- |
 | title                    | title                                                                                                              | ^[string]                                                             | ''        |
-| message                  | description text                                                                                                   | ^[string] / ^[VNode]                                                  | ''        |
+| message                  | description text                                                                                                   | ^[string] / ^[VNode] / ^[Function]`() => VNode`                       | ''        |
 | dangerouslyUseHTMLString | whether `message` is treated as HTML string                                                                        | ^[boolean]                                                            | false     |
 | type                     | notification type                                                                                                  | ^[enum]`'success' \| 'warning' \| 'info' \| 'error' \| ''`            | ''        |
 | icon                     | custom icon component. It will be overridden by `type`                                                             | ^[string] / ^[Component]                                              | —         |
@@ -124,6 +143,7 @@ ElNotification({}, appContext)
 | offset                   | offset from the top edge of the screen. Every Notification instance of the same moment should have the same offset | ^[number]                                                             | 0         |
 | appendTo                 | set the root element for the notification, default to `document.body`                                              | ^[string] / ^[HTMLElement]                                            | —         |
 | zIndex                   | initial zIndex                                                                                                     | ^[number]                                                             | 0         |
+| closeIcon  ^(2.9.8)      | custom close icon, default is Close                                                                                | ^[string] / ^[Component]                                              | —         |
 
 ### Method
 

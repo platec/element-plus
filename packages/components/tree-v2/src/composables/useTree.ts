@@ -4,6 +4,7 @@ import {
   CURRENT_CHANGE,
   NODE_CLICK,
   NODE_COLLAPSE,
+  NODE_DROP,
   NODE_EXPAND,
   TreeOptionsEnum,
 } from '../virtual-tree'
@@ -215,9 +216,17 @@ export function useTree(
     if (props.expandOnClickNode) {
       toggleExpand(node)
     }
-    if (props.showCheckbox && props.checkOnClickNode && !node.disabled) {
+    if (
+      props.showCheckbox &&
+      (props.checkOnClickNode || (node.isLeaf && props.checkOnClickLeaf)) &&
+      !node.disabled
+    ) {
       toggleCheckbox(node, !isChecked(node), true)
     }
+  }
+
+  function handleNodeDrop(node: TreeNode, e: DragEvent) {
+    emit(NODE_DROP, node.data, node, e)
   }
 
   function handleCurrentChange(node: TreeNode) {
@@ -314,6 +323,7 @@ export function useTree(
     isCurrent,
     isForceHiddenExpandIcon,
     handleNodeClick,
+    handleNodeDrop,
     handleNodeCheck,
     // expose
     getCurrentNode,
