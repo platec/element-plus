@@ -3,17 +3,17 @@
     ref="node$"
     :class="[
       ns.b('node'),
-      ns.is('expanded', expanded),
+      ns.is('expanded', node.expanded),
       ns.is('current', current),
-      ns.is('focusable', !disabled),
-      ns.is('checked', !disabled && checked),
+      ns.is('focusable', !node.disabled),
+      ns.is('checked', !node.disabled && node.checked),
       getNodeClass(node),
     ]"
     role="treeitem"
     tabindex="-1"
-    :aria-expanded="expanded"
-    :aria-disabled="disabled"
-    :aria-checked="checked"
+    :aria-expanded="node.expanded"
+    :aria-disabled="node.disabled"
+    :aria-checked="node.checked"
     :data-key="node?.key"
     @click.stop="handleClick"
     @contextmenu="handleContextMenu"
@@ -34,7 +34,7 @@
           ns.is('leaf', !!node?.isLeaf),
           ns.is('hidden', hiddenExpandIcon),
           {
-            expanded: !node?.isLeaf && expanded,
+            expanded: !node?.isLeaf && node.expanded,
           },
           ns.be('node', 'expand-icon'),
         ]"
@@ -44,13 +44,13 @@
       </el-icon>
       <el-checkbox
         v-if="showCheckbox"
-        :model-value="checked"
-        :indeterminate="indeterminate"
-        :disabled="disabled"
+        :model-value="node.checked"
+        :indeterminate="node.indeterminate"
+        :disabled="node.disabled"
         @change="handleCheckChange"
         @click.stop
       />
-      <el-node-content :node="{ ...node, expanded }" />
+      <el-node-content :node="node" />
     </div>
   </div>
 </template>

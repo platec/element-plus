@@ -60,23 +60,21 @@ export function useCheck(props: TreeProps, tree: Ref<Tree | undefined>) {
           }
           if (allChecked) {
             checkedKeySet.add(node.key)
+            node.indeterminate = false
           } else if (hasChecked) {
             indeterminateKeySet.add(node.key)
             checkedKeySet.delete(node.key)
+            node.indeterminate = true
           } else {
             checkedKeySet.delete(node.key)
             indeterminateKeySet.delete(node.key)
+            node.indeterminate = false
           }
         }
       })
     }
     indeterminateKeys.value = indeterminateKeySet
   }
-
-  const isChecked = (node: TreeNode) => checkedKeys.value.has(node.key)
-
-  const isIndeterminate = (node: TreeNode) =>
-    indeterminateKeys.value.has(node.key)
 
   const toggleCheckbox = (
     node: TreeNode,
@@ -89,6 +87,7 @@ export function useCheck(props: TreeProps, tree: Ref<Tree | undefined>) {
       checkedKeySet[checked ? SetOperationEnum.ADD : SetOperationEnum.DELETE](
         node.key
       )
+      node.checked = !!checked
       const children = node.children
       if (!props.checkStrictly && children) {
         children.forEach((childNode) => {
@@ -203,7 +202,7 @@ export function useCheck(props: TreeProps, tree: Ref<Tree | undefined>) {
       if (props.showCheckbox && treeNodeMap && keys?.length > 0) {
         for (const key of keys) {
           const node = treeNodeMap.get(key)
-          if (node && !isChecked(node)) {
+          if (node && !node.checked) {
             toggleCheckbox(node, true, false, false)
           }
         }
@@ -215,8 +214,6 @@ export function useCheck(props: TreeProps, tree: Ref<Tree | undefined>) {
   return {
     updateCheckedKeys,
     toggleCheckbox,
-    isChecked,
-    isIndeterminate,
     // expose
     getCheckedKeys,
     getCheckedNodes,

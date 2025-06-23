@@ -18,12 +18,8 @@
           :key="data[index].key"
           :style="style"
           :node="data[index]"
-          :expanded="data[index].expanded"
           :show-checkbox="showCheckbox"
-          :checked="isChecked(data[index])"
-          :indeterminate="isIndeterminate(data[index])"
           :item-size="treeNodeSize"
-          :disabled="isDisabled(data[index])"
           :current="isCurrent(data[index])"
           :hidden-expand-icon="isForceHiddenExpandIcon(data[index])"
           @click="handleNodeClick"
@@ -79,9 +75,6 @@ const {
   isNotEmpty,
   listRef,
   toggleExpand,
-  isIndeterminate,
-  isChecked,
-  isDisabled,
   isCurrent,
   isForceHiddenExpandIcon,
   handleNodeClick,

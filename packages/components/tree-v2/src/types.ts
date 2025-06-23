@@ -30,6 +30,8 @@ export interface TreeNode {
   parent?: TreeNode
   children?: TreeNode[]
   data: TreeNodeData
+  checked?: boolean
+  indeterminate?: boolean
   disabled?: boolean
   label?: string
   isLeaf?: boolean

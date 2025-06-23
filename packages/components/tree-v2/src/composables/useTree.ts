@@ -1,4 +1,4 @@
-import { computed, ref, shallowRef, watch } from 'vue'
+import { computed, ref, shallowReactive, shallowRef, watch } from 'vue'
 import { isObject } from '@element-plus/utils'
 import {
   CURRENT_CHANGE,
@@ -37,8 +37,6 @@ export function useTree(
   const listRef = ref<typeof FixedSizeList | undefined>()
 
   const {
-    isIndeterminate,
-    isChecked,
     toggleCheckbox,
     getCheckedKeys,
     getCheckedNodes,
@@ -107,11 +105,11 @@ export function useTree(
       const siblings: TreeNode[] = []
       for (const rawNode of nodes) {
         const value = getKey(rawNode)
-        const node: TreeNode = {
+        const node: TreeNode = shallowReactive({
           level,
           key: value,
           data: rawNode,
-        }
+        })
         node.label = getLabel(rawNode)
         node.parent = parent
         const children = getChildren(rawNode)
@@ -204,7 +202,7 @@ export function useTree(
       (props.checkOnClickNode || (node.isLeaf && props.checkOnClickLeaf)) &&
       !node.disabled
     ) {
-      toggleCheckbox(node, !isChecked(node), true)
+      toggleCheckbox(node, !node.checked, true)
     }
   }
 
@@ -245,10 +243,6 @@ export function useTree(
     expandedKeySet.value.delete(node.key)
     node.expanded = false
     emit(NODE_COLLAPSE, node.data, node)
-  }
-
-  function isDisabled(node: TreeNode): boolean {
-    return !!node.disabled
   }
 
   function isCurrent(node: TreeNode): boolean {
@@ -318,9 +312,6 @@ export function useTree(
     getChildren,
     toggleExpand,
     toggleCheckbox,
-    isChecked,
-    isIndeterminate,
-    isDisabled,
     isCurrent,
     isForceHiddenExpandIcon,
     handleNodeClick,

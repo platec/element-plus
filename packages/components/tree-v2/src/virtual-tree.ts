@@ -135,23 +135,7 @@ export const treeNodeProps = buildProps({
     type: definePropType<TreeNode>(Object),
     default: () => mutable(EMPTY_NODE),
   },
-  expanded: {
-    type: Boolean,
-    default: false,
-  },
-  checked: {
-    type: Boolean,
-    default: false,
-  },
-  indeterminate: {
-    type: Boolean,
-    default: false,
-  },
   showCheckbox: {
-    type: Boolean,
-    default: false,
-  },
-  disabled: {
     type: Boolean,
     default: false,
   },
