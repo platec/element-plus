@@ -8,6 +8,7 @@ import {
   onActivated,
   onMounted,
   onUpdated,
+  reactive,
   ref,
   resolveDynamicComponent,
   unref,
@@ -485,7 +486,7 @@ const createList = ({
               Fragment,
               { key: i },
               ($slots.default as Slot)?.({
-                data,
+                data: reactive(data),
                 index: i,
                 isScrolling: useIsScrolling ? states.isScrolling : undefined,
                 style: getItemStyle(i),
