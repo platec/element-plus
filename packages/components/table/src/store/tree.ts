@@ -54,11 +54,11 @@ function useTree<T extends DefaultRow>(watcherData: WatcherPropsData<T>) {
     const res = new Map<string | number, TreeData>() // 使用 Map 替代 Object，解决 number key 的问题
     walkTreeNode(
       data,
-      (parent: any, children: T, level: number) => {
-        const parentId = getRowIdentity(parent, rowKey, true)!
+      (parent, children, level) => {
+        const parentId = getRowIdentity(parent, rowKey, true)
         if (isArray(children)) {
           res.set(parentId, {
-            children: children.map((row) => row[rowKey]),
+            children: children.map((row) => row[rowKey!]),
             level,
           })
         } else if (lazy.value) {
@@ -165,7 +165,7 @@ function useTree<T extends DefaultRow>(watcherData: WatcherPropsData<T>) {
     }
   )
 
-  const updateTreeExpandKeys = (value: string[]) => {
+  const updateTreeExpandKeys = (value: (string | number)[]) => {
     expandRowKeys.value = value
     updateTreeData()
   }

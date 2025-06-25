@@ -182,9 +182,9 @@ export const getColumnByCell = function <T extends DefaultRow>(
 
 export const getRowIdentity = <T extends DefaultRow>(
   row: T,
-  rowKey: string | ((row: T) => string) | null
+  rowKey: string | ((row: T) => string) | null,
   isReturnRawValue: boolean = false
-): string | undefined => {
+): string => {
   if (!row) throw new Error('Row is required when get row identity')
   if (isString(rowKey)) {
     if (!rowKey.includes('.')) {
@@ -195,11 +195,11 @@ export const getRowIdentity = <T extends DefaultRow>(
     for (const element of key) {
       current = current[element]
     }
-    return isReturnRawValue ? current : `${current}`
+    return isReturnRawValue ? (current as unknown as string) : `${current}`
   } else if (isFunction(rowKey)) {
     return rowKey.call(null, row)
   }
-  return rowKey?.(row) ?? ''
+  return ''
 }
 
 export const getKeysMap = function <T extends DefaultRow>(
@@ -207,7 +207,7 @@ export const getKeysMap = function <T extends DefaultRow>(
   rowKey: string | null,
   flatten = false,
   childrenKey = 'children'
-): Record<string, { row: T; index: number }> {
+): Record<PropertyKey, { row: T; index: number }> {
   const data = array || []
   const arrayMap: Record<string, { row: T; index: number }> = {}
 
@@ -381,14 +381,14 @@ export function toggleRowStatus<T extends DefaultRow>(
 
 export function walkTreeNode<T extends DefaultRow>(
   root: T[],
-  cb: (parent: any, children: T | null, level: number) => void,
+  cb: (parent: any, children: T | T[] | null, level: number) => void,
   childrenKey = 'children',
   lazyKey = 'hasChildren',
   lazy = false
 ) {
   const isNil = (array: any): array is null => !(isArray(array) && array.length)
 
-  function _walker(parent: any, children: T, level: number) {
+  function _walker(parent: any, children: T | T[], level: number) {
     cb(parent, children, level)
     children.forEach((item: any) => {
       if (item[lazyKey] && lazy) {

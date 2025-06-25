@@ -45,13 +45,13 @@ function useExpand<T extends DefaultRow>(watcherData: WatcherPropsData<T>) {
     }
   }
 
-  const setExpandRowKeys = (rowKeys: string[]) => {
+  const setExpandRowKeys = (rowKeys: (string | number)[]) => {
     instance.store.assertRowKey()
     // TODO：这里的代码可以优化
     const data = watcherData.data.value || []
     const rowKey = watcherData.rowKey.value
     const keysMap = getKeysMap(data, rowKey)
-    expandRows.value = rowKeys.reduce((prev: T[], cur: string) => {
+    expandRows.value = rowKeys.reduce((prev: T[], cur) => {
       const info = keysMap[cur]
       if (info) {
         prev.push(info.row)
