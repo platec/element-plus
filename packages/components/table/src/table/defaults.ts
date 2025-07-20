@@ -129,7 +129,7 @@ interface TableProps<T extends DefaultRow> {
   highlightCurrentRow?: boolean
   currentRowKey?: string | number
   emptyText?: string
-  expandRowKeys?: Array<string | number>
+  expandRowKeys?: Array<string>
   defaultExpandAll?: boolean
   defaultSort?: Sort
   tooltipEffect?: string
@@ -420,10 +420,7 @@ export default {
   /**
    * @description whether to preserve expanded row content in DOM when collapsed
    */
-  preserveExpandedContent: {
-    type: Boolean,
-    default: false,
-  },
+  preserveExpandedContent: Boolean,
 }
 export type {
   SummaryMethod,

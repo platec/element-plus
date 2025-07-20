@@ -8,7 +8,7 @@ import {
 import { CircleClose } from '@element-plus/icons-vue'
 import { disabledTimeListsProps } from '../props/shared'
 
-import type { Component, ExtractPropTypes } from 'vue'
+import type { Component, ExtractPropTypes, __ExtractPublicPropTypes } from 'vue'
 import type { Options } from '@popperjs/core'
 import type { Dayjs } from 'dayjs'
 import type { Placement } from '@element-plus/components/popper'
@@ -234,12 +234,22 @@ export const timePickerDefaultProps = buildProps({
     default: true,
   },
   /**
+   * @description whether to show footer
+   */
+  showFooter: {
+    type: Boolean,
+    default: true,
+  },
+  /**
    * @description whether to show the number of the calendar week
    */
   showWeekNumber: Boolean,
 } as const)
 
 export type TimePickerDefaultProps = ExtractPropTypes<
+  typeof timePickerDefaultProps
+>
+export type TimePickerDefaultPropsPublic = __ExtractPublicPropTypes<
   typeof timePickerDefaultProps
 >
 
