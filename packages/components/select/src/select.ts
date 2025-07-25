@@ -28,7 +28,6 @@ import type { OptionValue } from './type'
 
 export const {
   useModelToggleProps: useSelectModelToggleProps,
-  useModelToggleEmits: SELECT_TOGGLE_EMIT,
   useModelToggle: useSelectModelToggle,
 } = createModelToggleComposable('visible' as const)
 
